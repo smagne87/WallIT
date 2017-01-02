@@ -1,0 +1,49 @@
+﻿@model IEnumerable<WallIT.Web.Models.UserViewModel>
+@{
+    ViewBag.Title = "Transacciones";
+    Layout = "~/Views/Shared/_emptyLayout.cshtml";
+    var entityName = "Transacciones";
+    var tab1Title = string.Format("Lista {0}", entityName);
+    var tab2Title = string.Format("Nuevo/Editar {0}", entityName);
+}
+@section MainContent{
+    <h2>@ViewBag.Title</h2>
+    <p>
+        <a href="#" role="button" class="btn btn-success" onclick="javascript: reloadCreateWithParameters({ idCaseFolder: $('#hdnIdCaseFolder').val() }); return false;">Nuevo</a>
+        <a href="/Transactions/TransactionsReport/@ViewBag.IdCurrentCaseFolder" role="button" class="btn btn-info">Reporte de Gastos/Ingresos</a>
+        <a href="#bulkDelete" role="button" data-toggle="modal" class="btn btn-delete btn-danger btn-toogle"
+           onclick="javascript: bulkDelete('tblTransactions', 'Transactions'); return false;">Borrar</a>
+    </p>
+    <input type="hidden" id="hdnIdCaseFolder" value="@ViewBag.IdCurrentCaseFolder" />
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="tblTransactions">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+}
+@section JavaScript
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            initPages('Transactions', '@entityName', '@tab1Title', '@tab2Title');
+            Reload();
+            $("#myTab a[href='#tab2']").on("click", function () {
+                reloadCreateWithParameters({ idCaseFolder: $('#hdnIdCaseFolder').val() });
+            });
+        });
+
+        var columns = [
+                { "sTitle": "<input type='checkbox' name='selectAll' id='selectAll' onclick='javascript:selectAllAjax(\"tblTransactions\");' />", "bSortable": false, "sWidth": "35px", "bSearchable": false },
+                { "sTitle": 'Gasto/Ingreso', "bSortable": true },
+                { "sTitle": 'Fecha de Creacion', "bSortable": true },
+                { "sTitle": 'Importe', "bSortable": true },
+                { "sTitle": 'Oficina', "bSortable": true },
+                { "sTitle": 'Caso', "bSortable": true }
+        ]
+
+        function Reload() {
+            loadTableContentAjax("tblTransactions", "/Transactions/GetAll?idCurrentCaseFolder=" + $("#hdnIdCaseFolder").val(), columns);
+        }
+
+    </script>
+}

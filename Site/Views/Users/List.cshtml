@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WallIT.Web.Models.UserViewModel>
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_emptyLayout.cshtml";
+    var entityName = "Usuarios";
+    var tab1Title = string.Format("List {0}", entityName);
+    var tab2Title = string.Format("Add/Edit {0}", entityName);
+}
+@section MainContent{
+    <h2>@ViewBag.Title</h2>
+    <p>
+        <a href="#" role="button" class="btn btn-success" onclick="javascript:reloadCreate(); return false;">Nuevo</a>
+        <a href="#bulkDelete" role="button" data-toggle="modal" class="btn btn-delete btn-danger btn-toogle"
+            onclick="javascript:bulkDelete('tblUsers', 'Users'); return false;">Borrar</a>
+    </p>
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="tblUsers">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+}
+@section JavaScript
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            initPages('Users', '@entityName', '@tab1Title', '@tab2Title');
+            Reload();
+        });
+
+        var columns = [
+                { "sTitle": "<input type='checkbox' name='selectAll' id='selectAll' onclick='javascript:selectAllAjax(\"tblUsers\");' />", "bSortable": false, "sWidth": "35px", "bSearchable": false },
+                { "sTitle": 'Nombre', "bSortable": true },
+                { "sTitle": 'Apellido', "bSortable": true },
+                { "sTitle": 'Email', "bSortable": true },
+                { "sTitle": 'Oficina', "bSortable": false }
+        ]
+
+        function Reload() {
+            loadTableContentAjax("tblUsers", "/Users/GetAll", columns);
+        }
+
+    </script>
+}

@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+}
+@section JavaScript
+{
+    @Scripts.Render("~/bundles/TabsJS")
+}
+@section MainContent{
+    <ul id="myTab" class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#tab1" aria-controls="list" role="tab" data-toggle="tab">@string.Format("List {0}", Html.Raw(ViewBag.EntityName))</a></li>
+        <li role="presentation"><a href="#tab2" aria-controls="create-edit" role="tab" data-toggle="tab">@string.Format("Add/Edit {0}", Html.Raw(ViewBag.EntityName))</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1">
+            @{Html.RenderAction("List");}
+        </div>
+        <div id="tab2" role="tabpanel" class="tab-pane">
+            @{Html.RenderAction("Create");}
+        </div>
+    </div>
+}
+@RenderBody()

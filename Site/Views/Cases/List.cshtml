@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Casos";
+    Layout = "~/Views/Shared/_emptyLayout.cshtml";
+    var entityName = "Casos";
+    var tab1Title = string.Format("Lista {0}", entityName);
+    var tab2Title = string.Format("Nuevo/Editar {0}", entityName);
+}
+@section MainContent{
+    <h2>@ViewBag.Title</h2>
+    <p>
+        <a href="#" role="button" class="btn btn-success" onclick="javascript:reloadCreate(); return false;">Nuevo</a>
+        <a href="/Cases/CasesReport" role="button" class="btn btn-info">Reporte de Casos</a>
+        <a href="/Cases/CasesDetailReport" role="button" class="btn btn-info">Reporte Detallado de Casos</a>
+        <a href="#bulkDelete" role="button" data-toggle="modal" class="btn btn-delete btn-danger btn-toogle"
+           onclick="javascript: bulkDelete('tblCases', 'Cases'); return false;">Borrar</a>
+    </p>
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="tblCases">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+}
+@section JavaScript
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            initPages('Cases', '@entityName', '@tab1Title', '@tab2Title');
+            Reload();
+        });
+
+        var columns = [
+                { "sTitle": "<input type='checkbox' name='selectAll' id='selectAll' onclick='javascript:selectAllAjax(\"tblCases\");' />", "bSortable": false, "sWidth": "35px", "bSearchable": false },
+                { "sTitle": 'Nombre', "bSortable": true },
+                { "sTitle": 'Fecha Inicio', "bSortable": true },
+                { "sTitle": 'Fecha Fin', "bSortable": true },
+                { "sTitle": 'Gastos', "bSortable": false }
+        ]
+
+        function Reload() {
+            loadTableContentAjax("tblCases", "/Cases/GetAll", columns);
+        }
+
+    </script>
+}

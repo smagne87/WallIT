@@ -1,0 +1,128 @@
+﻿@model WallIT.Web.Models.TransactionViewModel
+@{
+    ViewBag.Title = "Crear Transaccion";
+    Layout = Request.IsAjaxRequest() || ViewContext.Controller.ControllerContext.IsChildAction ? "~/Views/Shared/_emptyLayout.cshtml" : "~/Views/Shared/_AdminMaster.cshtml";
+    var entityName = "Transaccion";
+    var tab1Title = string.Format("Lista {0}", entityName);
+    var tab2Title = string.Format("Nuevo/Editar {0}", entityName);
+    List<WallIT.Web.Models.ItemSelectViewModel> allOffice = ViewBag.AllOffice;
+    List<WallIT.Web.Models.ItemSelectViewModel> allCases = ViewBag.AllCases;
+}
+@section AjaxJavascriptInclude{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@section JavaScript{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initPages('Transactions', '@entityName', '@tab1Title', '@tab2Title');
+
+            $("#transactionForm").on("submit", function (e) {
+                e.preventDefault();
+                callCreate($(this));
+            });
+
+            $('#AutocompleteTypeInOut').autocomplete({
+                serviceUrl: '/Transactions/AutocompleteTypeInOut',
+                onSelect: function (suggestion) {
+                    if ($('#IdTypeInOut').val() != suggestion.data) {
+                        $('#IdTypeInOut').val(suggestion.data);
+                    }
+                },
+                onInvalidateSelection: function () {
+                    $('#IdTypeInOut').val(0);
+                }
+            });
+
+            $('#IdOffice').on("change", function () {
+                var id = $(this).val();
+                submitUrl("/Transactions/LoadCasesByOffice/" + id, null, onLoadCasesByOfficeSuccess, onLoadCasesByOfficeFail);
+            });
+
+            
+            function onLoadCasesByOfficeSuccess(data) {
+                $("#IdCaseFolder").empty();
+                $("#IdCaseFolder").append($("<option></option>").val("0").html("Seleccione Caso"));
+                $.each(data, function () {
+                    $("#IdCaseFolder").append($("<option></option>").val(this.Id).html(this.TextValue));
+                });
+                $("#IdCaseFolder").selectpicker('refresh');
+                $("#IdCaseFolder").selectpicker('deselectAll');
+                $("#IdCaseFolder").selectpicker('refresh');
+            }
+
+            function onLoadCasesByOfficeFail(data) {
+
+            }
+
+        });
+    </script>
+}
+@section MainContent{
+    <h2>@ViewBag.Title</h2>
+    <form id="transactionForm" action="/Transactions/Create" method="POST" class="form-horizontal">
+        <fieldset>
+            <div id="errorPlaceHolder" class="alert alert-danger" role="alert" style="display: none;">
+                @Html.ValidationSummary()
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <select class="form-control selectpicker" name="IdTransactionType" id="IdTransactionType">
+                        <option value="0">Seleccione Operacion</option>
+                        <option value="1">Gasto</option>
+                        <option value="2">Ingreso</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input id="AutocompleteTypeInOut" class="form-control" type="text" placeholder="Gasto/Ingreso" name="TypeInOutName" />
+                    <input type="hidden" id="IdTypeInOut" name="IdTypeInOut" value="0" />
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(model => model.AmountString, new { @class = "form-control", placeholder = "$ 00,00" })
+                </div>
+                <div class="col-md-3">
+                    @Html.CheckBoxFor(model=> model.IsInitial) Gasto Inicial
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6">
+                    @if (WallIT.Web.SessionHelper.IsAdmin)
+                    {
+                        <select class="form-control selectpicker" name="IdOffice" id="IdOffice" data-live-search="true">
+                            <option value="0">Seleccione Oficina</option>
+                            @foreach (var office in allOffice)
+                            {
+                                <option value="@office.Id">@office.TextValue</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@ViewBag.IdCurrentOffice" id="IdOffice" name="IdOffice" />
+                        <input type="text" class="form-control" value="@ViewBag.CurrentOfficeName" disabled="disabled" readonly="readonly" />
+                    }
+                    @Html.ValidationMessageFor(model => model.IdOffice, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    @if (WallIT.Web.SessionHelper.IsAdmin)
+                    {
+                        <select class="form-control selectpicker" name="IdCaseFolder" id="IdCaseFolder" data-live-search="true">
+                            <option value="0">Seleccione Caso</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@ViewBag.IdCurrentCaseFolder" id="IdCaseFolder" name="IdCaseFolder" />
+                        <input type="text" class="form-control" value="@ViewBag.CurrentCaseFolderName" disabled="disabled" readonly="readonly" />
+                    }
+                    @Html.ValidationMessageFor(model => model.IdOffice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" id="btnSaveSubmit" class="btn btn-default">Guardar</button>
+                    <input type="button" data-dismiss="modal" onclick="javascript: cancelPage();" value="Cancelar" class="btn btn-inverse" />
+                </div>
+            </div>
+        </fieldset>
+    </form>
+}

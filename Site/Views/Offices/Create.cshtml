@@ -1,0 +1,45 @@
+﻿@model WallIT.Web.Models.OfficeViewModel
+@{
+    ViewBag.Title = "Crear Oficina";
+    Layout = Request.IsAjaxRequest() || ViewContext.Controller.ControllerContext.IsChildAction ? "~/Views/Shared/_emptyLayout.cshtml" : "~/Views/Shared/_AdminMaster.cshtml";
+    var entityName = "Oficina";
+    var tab1Title = string.Format("Lista {0}", entityName);
+    var tab2Title = string.Format("Nuevo/Editar {0}", entityName);
+    List<WallIT.Web.Models.ItemSelectViewModel> allOffice = ViewBag.AllOffice;
+}
+@section AjaxJavascriptInclude{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@section JavaScript{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initPages('Offices', '@entityName', '@tab1Title', '@tab2Title');
+
+            $("#officeForm").on("submit", function (e) {
+                e.preventDefault();
+                callCreate($(this));
+            });
+        });
+    </script>
+}
+@section MainContent{
+    <h2>@ViewBag.Title</h2>
+    <form id="officeForm" action="/Offices/Create" method="POST" class="form-horizontal">
+    <fieldset>
+        <div id="errorPlaceHolder" class="alert alert-danger" role="alert" style="display: none;">
+            @Html.ValidationSummary()
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                @Html.TextBoxFor(model => model.OfficeName, new { @class = "form-control", placeholder = "Nombre" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" id="btnSaveSubmit" class="btn btn-default">Guardar</button>
+                <input type="button" data-dismiss="modal" onclick="javascript: cancelPage();" value="Cancelar" class="btn btn-inverse" />
+            </div>
+        </div>
+    </fieldset>
+</form>
+}

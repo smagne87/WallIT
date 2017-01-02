@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WallIT | Backend - @ViewBag.Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+        var tempText = '...loading...';
+    </script>
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/MainScripts")
+    @Scripts.Render("~/bundles/DataTable")
+    @Scripts.Render("~/bundles/jquery-autocomplete")
+    @RenderSection("JavaScript", required: false)
+</head>
+<body>
+    <div class="container-fluid">
+        <br />
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 text-center"><a href="/">Inicio</a></div>
+        </div>
+        <br />
+    </div>
+    @RenderSection("MainContent")
+</body>
+</html>
